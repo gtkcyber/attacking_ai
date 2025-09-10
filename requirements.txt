@@ -1,5 +1,10 @@
 streamlit
 pandas
-numpy
+numpy<=2.2.6
 openai
 seaborn
+pydotplus
+scikit-learn
+lime
+shap
+
