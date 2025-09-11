@@ -7,4 +7,6 @@ pydotplus
 scikit-learn
 lime
 shap
-
+yellowbrick
+adversarial-robustness-toolbox
+torch
