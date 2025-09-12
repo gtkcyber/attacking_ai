@@ -10,3 +10,4 @@ shap
 yellowbrick
 adversarial-robustness-toolbox
 torch
+sentence-transformers
