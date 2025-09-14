@@ -11,3 +11,4 @@ yellowbrick
 adversarial-robustness-toolbox
 torch
 sentence-transformers
+ollama

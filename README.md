@@ -10,8 +10,7 @@ To run the exercises in the course, you will need an environment which can view 
 
 1.  Navigate to the directory where you have downloaded the course materials.
 2. Run the script `setup_env` which will install the required packages and activate a virtual environment.
-
-
+3. 
 We recommend either:
 * Anaconda (https://anaconda.com)
 * PyCharm (https://www.jetbrains.com/pycharm/download/)

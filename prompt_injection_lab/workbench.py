@@ -1,8 +1,9 @@
 # app.py
 import os
 import re
-import time
 from typing import List, Dict, Any
+from openai import OpenAI
+import ollama
 
 import streamlit as st
 
@@ -189,7 +190,6 @@ def use_openai() -> bool:
     return bool(os.getenv("OPENAI_API_KEY"))
 
 def call_openai(system_prompt: str, messages: List[Dict[str, str]], model_name: str) -> str:
-    from openai import OpenAI
     client = OpenAI()
     chat_msgs = [{"role": "system", "content": system_prompt}] + messages
     resp = client.chat.completions.create(
@@ -199,14 +199,19 @@ def call_openai(system_prompt: str, messages: List[Dict[str, str]], model_name: 
     )
     return resp.choices[0].message.content or ""
 
+def list_ollama_models():
+    import ollama
+    try:
+        models = ollama.list()["models"]
+        return [m["model"] for m in models]
+    except Exception as e:
+        return []
+
 def call_ollama(system_prompt: str, messages: List[Dict[str, str]], model_name: str) -> str:
-    import requests
-    prompt = system_prompt + "\n\n" + "\n".join([f"{m['role']}: {m['content']}" for m in messages])
-    resp = requests.post(
-        "http://localhost:11434/api/generate",
-        json={"model": model_name, "prompt": prompt, "stream": False},
-    )
-    return resp.json()["response"]
+    # Format conversation into Ollama-style messages
+    ollama_messages = [{"role": "system", "content": system_prompt}] + messages
+    resp = ollama.chat(model=model_name, messages=ollama_messages)
+    return resp["message"]["content"]
 
 def call_model(system_prompt: str, history: List[Dict[str, str]], difficulty: str, model_name: str) -> str:
     backend = st.session_state.get("backend", "OpenAI")
@@ -281,7 +286,17 @@ with st.sidebar:
         st.session_state["model_name"] = mdl
         st.write(f"Using OpenAI: {mdl}")
     elif backend == "Ollama":
-        ollama_model = st.text_input("Ollama model", value=st.session_state.get("model_name", "mistral"))
+        available_models = list_ollama_models()
+        if available_models:
+            ollama_model = st.selectbox(
+                "Select Ollama model",
+                options=available_models,
+                index=0,
+            )
+        else:
+            st.warning("No Ollama models found. Run `ollama pull mistral` or another model.")
+            ollama_model = st.text_input("Enter model name manually", value="mistral")
+
         st.session_state["model_name"] = ollama_model
         st.write(f"Using Ollama: {ollama_model}")
 
