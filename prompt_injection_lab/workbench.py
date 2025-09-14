@@ -2,10 +2,10 @@
 import os
 import re
 from typing import List, Dict, Any
-from openai import OpenAI
-import ollama
 
 import streamlit as st
+from openai import OpenAI
+import ollama
 
 # ------------------------------ App constants ------------------------------
 st.set_page_config(page_title="Prompt Injection Dojo", layout="wide", initial_sidebar_state="expanded")
@@ -168,10 +168,8 @@ def preprocess_user_input(user_input: str, difficulty: str) -> str:
         return user_input
 
 def postprocess_model_output(reply: str, difficulty: str, challenge_id: str) -> str:
-    # Special case: structured_output_corruption should not be sanitized
     if challenge_id == "structured_output_corruption":
         return reply
-
     if difficulty == "Easy":
         return reply
     elif difficulty == "Medium":
@@ -199,19 +197,17 @@ def call_openai(system_prompt: str, messages: List[Dict[str, str]], model_name: 
     )
     return resp.choices[0].message.content or ""
 
-def list_ollama_models():
-    import ollama
-    try:
-        models = ollama.list()["models"]
-        return [m["model"] for m in models]
-    except Exception as e:
-        return []
-
 def call_ollama(system_prompt: str, messages: List[Dict[str, str]], model_name: str) -> str:
-    # Format conversation into Ollama-style messages
     ollama_messages = [{"role": "system", "content": system_prompt}] + messages
     resp = ollama.chat(model=model_name, messages=ollama_messages)
     return resp["message"]["content"]
+
+def list_ollama_models():
+    try:
+        models = ollama.list()["models"]
+        return [m["model"] for m in models]
+    except Exception:
+        return []
 
 def call_model(system_prompt: str, history: List[Dict[str, str]], difficulty: str, model_name: str) -> str:
     backend = st.session_state.get("backend", "OpenAI")
@@ -296,7 +292,6 @@ with st.sidebar:
         else:
             st.warning("No Ollama models found. Run `ollama pull mistral` or another model.")
             ollama_model = st.text_input("Enter model name manually", value="mistral")
-
         st.session_state["model_name"] = ollama_model
         st.write(f"Using Ollama: {ollama_model}")
 
