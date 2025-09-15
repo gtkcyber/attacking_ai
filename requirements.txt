@@ -12,7 +12,6 @@ adversarial-robustness-toolbox
 torch
 sentence-transformers
 ollama
-
 ydata-profiling
 joblib
 matplotlib
