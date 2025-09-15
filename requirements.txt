@@ -12,3 +12,12 @@ adversarial-robustness-toolbox
 torch
 sentence-transformers
 ollama
+
+ydata-profiling
+joblib
+matplotlib
+ipython
+torchvision
+python-dotenv
+typing
+IProgress
