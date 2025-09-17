@@ -5,6 +5,7 @@ openai
 seaborn
 pydotplus
 scikit-learn
+scikit-image
 lime
 shap
 yellowbrick
